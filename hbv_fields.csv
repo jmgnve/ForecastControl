@@ -1,0 +1,156 @@
+regine_area;main_no;point_no;param_key;version_no_end;station_name
+2;11;0;1001;0;Narsjø
+2;28;0;1001;0;Aulestad
+2;32;0;1001;0;Atnasjø
+2;142;0;1001;1;Knappom
+2;145;0;1001;1;Losna
+2;265;0;1001;1;Unsetåa
+2;268;0;1001;0;Akslen
+2;279;0;1001;1;Kråkfoss
+2;291;0;1001;1;Tora
+2;323;0;1001;1;Fura
+2;439;0;1001;1;Kvarstadseter
+2;463;0;1001;1;Vismunda
+2;479;0;1001;1;Li bru
+2;604;0;1001;0;Elverum
+2;614;0;1001;0;Rosten
+2;633;0;1001;0;Stortorp
+2;634;0;1001;1;Lena
+3;22;0;1001;1;Høgfoss
+6;10;0;1001;1;Gryta
+6;71;0;1001;1;Sinnerdammen
+8;2;0;1001;1;Bjørnegårdssvingen
+8;6;0;1001;1;Sæternbekken
+12;70;0;1001;1;Etna
+12;97;0;1001;1;Bergheim
+12;114;0;1001;1;Garhammerfoss
+12;150;0;1001;1;Buvatn
+12;171;0;1001;1;Hølervatn
+12;178;0;1001;1;Eggedal
+12;192;0;1001;1;Sundbyfoss
+12;193;0;1001;1;Fiskum
+12;209;0;1001;1;Urula
+12;215;0;1001;1;Storeskar
+12;286;0;1001;0;Jaren ndf.
+12;290;0;1001;0;Bagn
+15;15;0;1001;0;Kongsberg
+15;21;0;1001;0;Jondalselv
+15;49;0;1001;1;Halledalsvatn
+15;53;0;1001;0;Borgåi
+15;53;0;1001;0;Borgåi
+15;79;0;1001;0;Orsjoren
+15;79;0;1001;0;Orsjoren
+15;174;0;1001;1;Istreelva
+16;66;0;1001;1;Grosettjern
+16;75;0;1001;1;Tannsvatn (Lognvikvatnet)
+16;122;0;1001;1;Grovåi
+16;132;0;1001;1;Gjuvå
+16;140;0;1001;1;Kvenna
+16;193;0;1001;0;Hørte
+18;10;0;1001;1;Gjerstad
+19;107;0;1001;1;Lilleelv
+20;2;0;1001;1;Austenå
+21;47;0;1001;1;Lislefjødd
+22;4;0;1001;1;Kjølemo
+22;16;0;1001;0;Myglevatn ndf.
+22;16;0;1001;0;Myglevatn ndf.
+22;22;0;1001;1;Søgne
+24;8;0;1001;0;Møska (Skolandsvatnet)
+24;9;0;1001;0;Tingvatn (Lygne)
+25;24;0;1001;1;Gjuvvatn
+25;32;0;1001;1;Knabåni
+26;20;0;1001;1;Årdal
+26;26;0;1001;0;Jogla
+26;26;0;1001;0;Jogla
+26;29;0;1001;1;Refsvatn
+27;16;0;1001;1;Bjordal
+27;24;0;1001;0;Helleland
+28;7;0;1001;1;Haugland
+35;16;0;1001;1;Djupadalsvatn
+36;9;0;1001;1;Middal
+41;1;0;1001;1;Stordalsvatn
+42;2;0;1001;1;Djupevad
+46;9;0;1001;1;Fønnerdalsvatn
+48;1;0;1001;1;Sandvenvatn
+48;5;0;1001;1;Reinsnosvatn
+50;1;0;1001;1;Hølen
+50;13;0;1001;1;Bjoreio
+50;13;0;1001;2;Bjoreio
+55;4;0;1001;1;Røykenes
+55;5;0;1001;1;Dyrdalsvatn
+62;5;0;1001;1;Bulken (Vangsvatnet)
+62;10;0;1001;0;Myrkdalsvatn
+62;10;0;1001;0;Myrkdalsvatn
+62;18;0;1001;1;Svartavatn
+72;5;0;1001;2;Brekke bru
+73;27;0;1001;1;Sula
+75;23;0;1001;1;Krokenelv
+76;5;0;1001;0;Nigardsbrevatn
+76;5;0;1001;0;Nigardsbrevatn
+77;3;0;1001;1;Sogndalsvatn
+78;8;0;1001;0;Bøyumselv
+79;3;0;1001;1;Nessedalselv
+82;4;0;1001;0;Nautsundvatn
+82;4;0;1001;0;Nautsundvatn
+83;2;0;1001;1;Viksvatn (Hestadfjorden)
+84;11;0;1001;0;Hovefoss
+84;11;0;1001;0;Hovefoss
+86;12;0;1001;1;Skjerdalselv
+87;10;0;1001;0;Gloppenelv v/Bergheim
+88;4;0;1001;1;Lovatn
+91;2;0;1001;1;Dalsbøvatn
+97;1;0;1001;1;Fetvatn (Fitjavatnet)
+98;4;0;1001;0;Øye ndf.
+103;1;0;1001;2;Ulvåa v/Storhølen
+103;40;0;1001;0;Rauma v/Horgheim
+104;23;0;1001;1;Vistdal
+105;1;0;1001;2;Osenelv v/Øren
+107;3;0;1001;1;Farstadelva v/Farstad
+109;9;0;1001;1;Driva v/Risefoss
+109;29;0;1001;1;Dalavatn
+109;42;0;1001;0;Driva v/Elverhøy bru
+112;8;0;1001;1;Rinna
+121;20;0;1001;1;Åmot
+122;9;0;1001;1;Gaulfoss
+122;11;0;1001;1;Eggafoss
+122;17;0;1001;1;Hugdal bru
+123;31;0;1001;1;Kjeldstad i Garbergelva
+124;2;0;1001;1;Høggås bru
+127;11;0;1001;1;Veravatn
+127;13;0;1001;1;Dillfoss
+133;7;0;1001;0;Krinsvatn (Kringsvatnet)
+138;1;0;1001;1;Øyungen
+139;15;0;1001;1;Bjørnstad
+139;35;0;1001;0;Trangen
+148;2;0;1001;1;Mevatnet
+151;15;0;1001;1;Nervoll
+152;4;0;1001;0;Fustvatn
+156;10;0;1001;1;Berget
+157;3;0;1001;1;Vassvatn
+160;7;0;1001;1;Skauvoll
+161;7;0;1001;1;Tollåga
+162;3;0;1001;0;Skarsvatn
+163;5;0;1001;1;Junkerdalselv
+165;6;0;1001;1;Strandå
+168;2;0;1001;1;Mørsvik bru
+173;8;0;1001;1;Coarveij
+174;3;0;1001;1;Øvstevatn (Litlevatnet)
+174;11;0;1001;1;Taraldsvikelv
+177;4;0;1001;1;Sneisvatn
+191;2;0;1001;0;Øvrevatn
+196;35;0;1001;0;Malangsfoss
+200;4;0;1001;0;Skogsfjordvatn
+203;2;0;1001;0;Jægervatn
+206;3;0;1001;2;Manndalen bru
+208;3;0;1001;1;Svartfossberget
+212;10;0;1001;1;Masi
+212;27;0;1001;1;Eibyelva v/Hammeren
+212;49;0;1001;0;Halsnes
+223;2;0;1001;0;Lombola
+230;1;0;1001;1;Nordmannset
+234;13;0;1001;0;Vækkava, Iesjokka
+234;18;0;1001;0;Polmak nye
+247;3;0;1001;0;Karpelva
+311;6;0;1001;0;Nybergsund
+311;460;0;1001;0;Engeren
+313;10;0;1001;0;Magnor

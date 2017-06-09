@@ -1,0 +1,10 @@
+HYDRA=/usr/local/hydra
+SYBASE=/opt/sybase
+SYBASE_OCS=OCS-12_5
+DSQUERY=GLOMMA
+LD_LIBRARY_PATH=/opt/sybase/ODBC-12_5/lib:/opt/sybase/OCS-12_5/lib:/opt/sybase/OCS-12_5/lib3p
+
+# m h  dom mon dow   command
+0 3 * * * $HOME/flood_forecasting/control/download_qobs.sh
+
+
