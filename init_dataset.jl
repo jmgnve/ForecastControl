@@ -16,8 +16,8 @@ stat_list = ["2.11","2.28","2.32","2.142","2.145","2.265","2.268","2.279","2.291
             "163.5","165.6","168.2","173.8","174.3","174.11","177.4","191.2","196.35","200.4","203.2","206.3",
             "208.3","212.10","212.27","212.49","223.2","230.1","234.13","234.18","247.3","311.6","311.460","313.10"]
 
-time_vec = DateTime(2000, 10, 01):floor(now(), Dates.Day)
+time_vec = DateTime(1990, 10, 01):floor(now(), Dates.Day)
 
-save_folder = "../model_input"
+save_folder = "/hdata/fou/jmg/flood_forecasting/model_input"
 
 init_dataset(stat_list, time_vec, save_folder)

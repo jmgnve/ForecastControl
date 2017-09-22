@@ -3,7 +3,7 @@
 using NveData
 using DataFrames
 
-save_folder = "/home/jmg/flood_forecasting/model_input"
+save_folder = "/hdata/fou/jmg/flood_forecasting/model_input"
 
 stat_list = readdir(save_folder)
 stat_list = [replace(x, "_data", "") for x in stat_list]
