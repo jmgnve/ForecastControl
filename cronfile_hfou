@@ -1,3 +1,5 @@
 # m h  dom mon dow   command
-0 5 * * * /home/jmg/Julia/bin/julia /home/jmg/flood_forecasting/control/update_dataset.jl
-30 6 * * * /home/jmg/Julia/bin/julia /home/jmg/flood_forecasting/control/run_operational.jl
+30 7 * * * /home/jmg/julia/bin/julia /home/jmg/flood_forecasting/control/run_operational.jl
+30 10 * * * /home/jmg/julia/bin/julia /home/jmg/flood_forecasting/control/run_operational.jl
+30 12 * * * /home/jmg/julia/bin/julia /home/jmg/flood_forecasting/control/run_operational.jl
+0 19 * * * /home/jmg/julia/bin/julia /home/jmg/flood_forecasting/control/run_operational.jl
