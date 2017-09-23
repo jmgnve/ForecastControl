@@ -1,34 +1,14 @@
 # Load packages
 
 using Vann
-using DataAssim
 using ExcelReaders
 using DataFrames
 using PyPlot
 using JLD
 
-# Settings
 
-opt = Dict("epot_choice" => :epot_monthly,
-           "snow_choice" => :TinBasic, 
-           "hydro_choice" => :Gr4j,
-           "filter_choice" => :enkf_filter,
-           "nens" => 100,
-           "warmup" => 3*365,
-           "path_inputs" => "/home/jmg/flood_forecasting/model_input",
-           "path_save" => "/home/jmg/flood_forecasting/model_results",
-           "path_calib" => "/home/jmg/flood_forecasting/model_calib")
 
-# Create folders for saving results
-
-opt["path_save"] = joinpath(opt["path_save"], Dates.format(now(), "yyyymmddHHMM"))
-
-mkpath(opt["path_save"] * "/tables")
-mkpath(opt["path_save"] * "/figures")
-
-# Run over all stations
-
-function run_all_stations(opt)
+function run_operational(opt)
 
     # Loop over all watersheds
 
@@ -40,7 +20,7 @@ function run_all_stations(opt)
 
         # Load data
 
-        date, tair, prec, q_obs, frac = load_operational("$(opt["path_inputs"])/$dir_cur")
+        date, tair, prec, q_obs, frac = load_data("$(opt["path_inputs"])/$dir_cur")
 
         # Compute potential evapotranspiration
 
@@ -53,9 +33,13 @@ function run_all_stations(opt)
         st_snow = tmp["st_snow"]
         st_hydro = tmp["st_hydro"]
 
-        # Run model and filter
+        # Run model
 
         q_res = eval(Expr(:call, opt["filter_choice"], st_snow, st_hydro, prec, tair, epot, q_obs, opt["nens"]))
+
+
+
+
 
         # Add results to dataframe
 
@@ -72,25 +56,7 @@ function run_all_stations(opt)
 
         writetable(file_name, df_res, quotemark = '"', separator = '\t')
 
-        # Plot results for complete period
-
-        ioff()
-
-        fig = plt[:figure](figsize = (12,7))
-
-        plt[:style][:use]("ggplot")
-
-        plt[:plot](date, q_obs, linewidth = 1.2, color = "k", label = "Observed", zorder = 1)
-        plt[:fill_between](date, q_max, q_min, facecolor = "b", edgecolor = "b", label = "Simulated", alpha = 0.55, zorder = 2)
-        plt[:ylabel]("Runoff (mm/day)")
-
-        plt[:legend]()
         
-        file_name = joinpath(opt["path_save"], "figures", dir_cur[1:end-5] * "_complete.png")
-        
-        savefig(file_name, dpi = 600)
-        close(fig)
-
         # Plot results for forecast period
 
         disp_period = 70
@@ -122,7 +88,24 @@ function run_all_stations(opt)
 end
 
 
+
+# Settings
+
+opt = Dict("epot_choice" => :oudin,
+           "path_inputs" => "/hdata/fou/jmg/flood_forecasting/model_input",
+           "path_save" =>   "/hdata/fou/jmg/flood_forecasting/model_input",
+           "path_calib" =>  "/hdata/fou/jmg/flood_forecasting/model_input")
+
+# Create folders for saving results
+
+opt["path_save"] = joinpath(opt["path_save"], Dates.format(now(), "yyyymmddHHMM"))
+
+mkpath(opt["path_save"] * "/tables")
+mkpath(opt["path_save"] * "/figures")
+
+# Run over all stations
+
 # Run operational
 
-run_all_stations(opt)
+run_operational(opt)
 
