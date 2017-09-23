@@ -7,6 +7,69 @@ using PyPlot
 using JLD
 
 
+""" Run seasonal forecast. """
+function run_season(model, date, tair, prec, epot, ndays)
+    
+    # Time period for seasonal forecast
+
+    date_season = (date[end] + Dates.Day(1)):(date[end] + Dates.Day(ndays+1))
+
+    # Start month and day of forecast period
+
+    month = Dates.month(date_season[1])
+    
+    day = Dates.day(date_season[1])
+
+    # Unique year in historic period (skip first and last)
+    
+    year_unique = unique(Dates.year.(date))
+    
+    year_unique = year_unique[2:end-1]
+
+    # Loop over historic years
+    
+    df = DataFrame(Time = date_season)
+
+    for year in year_unique
+    
+        # Find period in historic data
+    
+        date_start = DateTime(year, month, day)
+        date_stop  = date_start + Dates.Day(ndays)
+        
+        # Crop data
+        
+        istart = find(date .== date_start)
+        istop = find(date .== date_stop)
+        
+        tair_cropped = tair[:, istart[1]:istop[1]]
+        prec_cropped = prec[:, istart[1]:istop[1]]
+        epot_cropped = epot[istart[1]:istop[1]]
+    
+        # Create input object
+        
+        input = InputPTE(prec_cropped, tair_cropped, epot_cropped)
+    
+        # Run season forecast
+    
+        model_tmp = deepcopy(model)
+    
+        q_sim = run_model(model_tmp, input)
+
+        q_sim = round.(q_sim, 2)
+
+        df[Symbol(year)] = q_sim
+        
+    end
+
+    return df
+
+end
+
+
+
+
+
 """ Run forecast for selected model """
 function run_operational(opt_path, opt_model, forecast_issued; plot_res = true)
 
@@ -69,6 +132,8 @@ function run_operational(opt_path, opt_model, forecast_issued; plot_res = true)
 
             df_res = DataFrame(date = date, q_obs = q_obs, q_sim = q_sim)
 
+            df_res = df_res[end-100:end,:]
+
             # Save results to txt file
 
             file_name = joinpath(path_save, "tables_short_forecast", "$(stat_name)_data.txt")
@@ -83,7 +148,7 @@ function run_operational(opt_path, opt_model, forecast_issued; plot_res = true)
 
                 disp_period = 70
 
-                fig = plt[:figure](figsize = (12,7))
+                fig = plt[:figure](figsize = (8, 6))
 
                 plt[:style][:use]("ggplot")
                 
@@ -96,15 +161,25 @@ function run_operational(opt_path, opt_model, forecast_issued; plot_res = true)
                 
                 file_name = joinpath(path_save, "figures_short_forecast", "$(stat_name)_data.png")
                             
-                savefig(file_name, dpi = 300)
+                savefig(file_name, dpi = 100)
                 
                 close(fig)
 
             end
 
+            # Run seasonal forecast
+
+            df_season = run_season(model, date, tair, prec, epot, opt_model["ndays"])
+
+            file_name = joinpath(path_save, "tables_season_forecast", "$(stat_name)_data.txt")
+            
+            writetable(file_name, df_season, quotemark = '"', separator = '\t')
+
         catch
 
-            warning("Failed to run station $(stat_name)\n")
+            stat_name = dir_cur[1:end-5]
+
+            info("Failed to run station $(stat_name)\n")
 
         end
 
@@ -112,6 +187,15 @@ function run_operational(opt_path, opt_model, forecast_issued; plot_res = true)
 
 end
 
+
+
+tic()
+
+# Update input data
+
+println("Update input datasets")
+
+include("update_dataset.jl")
 
 # Time for issuing the forecast
 
@@ -125,19 +209,22 @@ opt_path = Dict("path_inputs" =>  "/hdata/fou/jmg/flood_forecasting/model_input"
 
 # Run for gr4j
 
-opt_model = Dict("epot_choice" =>  :oudin,
-                 "model_choice" => :model_gr4j)
+opt_model = Dict("epot_choice" => :oudin,
+                 "model_choice" => :model_gr4j,
+                 "ndays" => 100)
 
 println("Running model $(opt_model["model_choice"])")
 
-@time run_operational(opt_path, opt_model, forecast_issued, plot_res = false)
+@time run_operational(opt_path, opt_model, forecast_issued, plot_res = true)
 
 # Run for hbv_ligth
 
-opt_model = Dict("epot_choice" =>  :oudin,
-                 "model_choice" => :model_hbv_light)
+opt_model = Dict("epot_choice" => :oudin,
+                 "model_choice" => :model_hbv_light,
+                 "ndays" => 100)
 
 println("Running model $(opt_model["model_choice"])")
 
-@time run_operational(opt_path, opt_model, forecast_issued, plot_res = false)
+@time run_operational(opt_path, opt_model, forecast_issued, plot_res = true)
 
+toc()

@@ -9,4 +9,4 @@ stat_list = readdir(save_folder)
 stat_list = [replace(x, "_data", "") for x in stat_list]
 stat_list = [replace(x, "_", ".") for x in stat_list]
 
-update_dataset(stat_list, save_folder)
+@time update_dataset(stat_list, save_folder)
