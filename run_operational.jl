@@ -1,85 +1,110 @@
 # Load packages
 
-using Vann
+using VannModels
 using ExcelReaders
 using DataFrames
 using PyPlot
 using JLD
 
 
+""" Run forecast for selected model """
+function run_operational(opt_path, opt_model, forecast_issued; plot_res = true)
 
-function run_operational(opt)
+    # Create folders for saving results
+
+    path_save = joinpath(opt_path["path_save"], forecast_issued, string(opt_model["model_choice"]))
+
+    mkpath(joinpath(path_save, "tables_short_forecast"))
+    mkpath(joinpath(path_save, "tables_season_forecast"))
+    mkpath(joinpath(path_save, "figures_short_forecast"))
 
     # Loop over all watersheds
 
-    dir_all = readdir(opt["path_inputs"])
+    dir_all = readdir(opt_path["path_inputs"])
 
     for dir_cur in dir_all
 
         try
 
-        # Load data
+            # Print progress
 
-        date, tair, prec, q_obs, frac = load_data("$(opt["path_inputs"])/$dir_cur")
+            stat_name = dir_cur[1:end-5]
 
-        # Compute potential evapotranspiration
+            println("  Running $(stat_name)")
 
-        epot = eval(Expr(:call, opt["epot_choice"], date))
+            # Load data
 
-        # Load initial states
-
-        tmp = load(joinpath(opt["path_calib"], "model_data", replace(dir_cur, "data", "modeldata.jld")))
-
-        st_snow = tmp["st_snow"]
-        st_hydro = tmp["st_hydro"]
-
-        # Run model
-
-        q_res = eval(Expr(:call, opt["filter_choice"], st_snow, st_hydro, prec, tair, epot, q_obs, opt["nens"]))
-
-
-
-
-
-        # Add results to dataframe
-
-        q_obs = round(q_obs, 2)
-        q_sim = round(q_res[:, 1], 2)
-        q_min = round(q_res[:, 2], 2)
-        q_max = round(q_res[:, 3], 2)
-
-        df_res = DataFrame(date = date, q_obs = q_obs, q_sim = q_sim, q_min = q_min, q_max = q_max)
-
-        # Save results to txt file
-
-        file_name = joinpath(opt["path_save"], "tables", dir_cur[1:end-5] * "_station.txt")
-
-        writetable(file_name, df_res, quotemark = '"', separator = '\t')
-
+            path = joinpath(opt_path["path_inputs"], dir_cur)
+            
+            date, tair, prec, q_obs, frac_lus, frac_area, elev = load_data(path)
+                        
+            # Compute potential evapotranspiration
         
-        # Plot results for forecast period
+            lat = 60.0   # TODO: Read latitude in NveData, and read in load_data
+            
+            epot = oudin(date, tair, lat, frac_area)
 
-        disp_period = 70
+            # Initilize input object
 
-        fig = plt[:figure](figsize = (12,7))
+            input = InputPTE(prec, tair, epot)
 
-        plt[:style][:use]("ggplot")
-        
-        plt[:axvline](x=now(), color = "r", linestyle = "dashed")
-        plt[:plot](date[end-disp_period:end], q_obs[end-disp_period:end], linewidth = 1.2, color = "k", label = "Observed", zorder = 1)
-        plt[:fill_between](date[end-disp_period:end], q_max[end-disp_period:end], q_min[end-disp_period:end], facecolor = "b", edgecolor = "b", label = "Simulated", alpha = 0.55, zorder = 2)
-        plt[:ylabel]("Runoff (mm/day)")
+            # Load initial states
+            
+            file_name = joinpath(opt_path["path_calib"], string(opt_model["model_choice"]), "model_data", "$(stat_name)_modelobj.jld")
+            
+            tmp = load(file_name)
+          
+            model = tmp["model"]
 
-        plt[:legend]()
-        
-        file_name = joinpath(opt["path_save"], "figures", dir_cur[1:end-5] * "_forecast.png")
-        
-        savefig(file_name, dpi = 600)
-        close(fig)
+            # Run model
+
+            init_states!(model)
+            
+            q_sim = run_model(model, input)
+
+            # Add results to dataframe
+
+            q_obs = round.(q_obs, 2)
+            q_sim = round.(q_sim, 2)
+
+            df_res = DataFrame(date = date, q_obs = q_obs, q_sim = q_sim)
+
+            # Save results to txt file
+
+            file_name = joinpath(path_save, "tables_short_forecast", "$(stat_name)_data.txt")
+
+            writetable(file_name, df_res, quotemark = '"', separator = '\t')
+            
+            # Plot results for forecast period
+
+            if plot_res
+
+                ioff()
+
+                disp_period = 70
+
+                fig = plt[:figure](figsize = (12,7))
+
+                plt[:style][:use]("ggplot")
+                
+                plt[:axvline](x = now(), color = "r", linestyle = "dashed")
+                plt[:plot](date[end-disp_period:end], q_obs[end-disp_period:end], linewidth = 1.2, color = "k", label = "Observed")
+                plt[:plot](date[end-disp_period:end], q_sim[end-disp_period:end], linewidth = 1.2, color = "r", label = "Simulated")
+                plt[:ylabel]("Runoff (mm/day)")
+
+                plt[:legend]()
+                
+                file_name = joinpath(path_save, "figures_short_forecast", "$(stat_name)_data.png")
+                            
+                savefig(file_name, dpi = 300)
+                
+                close(fig)
+
+            end
 
         catch
 
-            info("Unable to run for station $(replace(dir_cur, "_data", ""))\n")
+            warning("Failed to run station $(stat_name)\n")
 
         end
 
@@ -88,24 +113,31 @@ function run_operational(opt)
 end
 
 
+# Time for issuing the forecast
 
-# Settings
+forecast_issued = Dates.format(now(), "yyyymmddHHMM")
 
-opt = Dict("epot_choice" => :oudin,
-           "path_inputs" => "/hdata/fou/jmg/flood_forecasting/model_input",
-           "path_save" =>   "/hdata/fou/jmg/flood_forecasting/model_input",
-           "path_calib" =>  "/hdata/fou/jmg/flood_forecasting/model_input")
+# Options for paths
 
-# Create folders for saving results
+opt_path = Dict("path_inputs" =>  "/hdata/fou/jmg/flood_forecasting/model_input",
+                "path_save" =>    "/hdata/fou/jmg/flood_forecasting/res_forecast",
+                "path_calib" =>   "/hdata/fou/jmg/flood_forecasting/model_calib")
 
-opt["path_save"] = joinpath(opt["path_save"], Dates.format(now(), "yyyymmddHHMM"))
+# Run for gr4j
 
-mkpath(opt["path_save"] * "/tables")
-mkpath(opt["path_save"] * "/figures")
+opt_model = Dict("epot_choice" =>  :oudin,
+                 "model_choice" => :model_gr4j)
 
-# Run over all stations
+println("Running model $(opt_model["model_choice"])")
 
-# Run operational
+@time run_operational(opt_path, opt_model, forecast_issued, plot_res = false)
 
-run_operational(opt)
+# Run for hbv_ligth
+
+opt_model = Dict("epot_choice" =>  :oudin,
+                 "model_choice" => :model_hbv_light)
+
+println("Running model $(opt_model["model_choice"])")
+
+@time run_operational(opt_path, opt_model, forecast_issued, plot_res = false)
 
