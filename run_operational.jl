@@ -1,7 +1,7 @@
 # Load packages
 
 using VannModels
-using ExcelReaders
+#using ExcelReaders
 using DataFrames
 using PyPlot
 using JLD
@@ -109,7 +109,7 @@ function run_operational(opt_path, opt_model, forecast_issued; plot_res = true)
 
             # Initilize input object
 
-            input = InputPTE(prec, tair, epot)
+            input = InputPTE(date, prec, tair, epot)
 
             # Load initial states
             
@@ -217,7 +217,7 @@ println("Running model $(opt_model["model_choice"])")
 
 @time run_operational(opt_path, opt_model, forecast_issued, plot_res = true)
 
-# Run for hbv_ligth
+# Run for hbv_light
 
 opt_model = Dict("epot_choice" => :oudin,
                  "model_choice" => :model_hbv_light,

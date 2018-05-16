@@ -4,7 +4,6 @@
 using VannModels
 using PyPlot
 using DataFrames
-using ExcelReaders
 using JLD
 using CSV
 using ProgressMeter
@@ -78,7 +77,7 @@ function calib_all_stations(opt)
 
         # Initilize input object
 
-        input = InputPTE(prec, tair, epot)
+        input = InputPTE(date, prec, tair, epot)
 
         # Initilize model object
 
@@ -90,7 +89,7 @@ function calib_all_stations(opt)
 
         # Rerun model with optimized parameters
 
-        init_states!(model)
+        init_states!(model, date[1])
 
         set_params!(model, param_tuned)
 
@@ -150,15 +149,9 @@ function calib_all_stations(opt)
 
         push!(df_calib, [stat_name nse_res kge_res])
 
-
-
-        # TODO: Save model parameters here perhaps ???
-
-
-
         # Save model object (including parameter values)
 
-        init_states!(model)
+        init_states!(model, date[1])
 
         file_save = joinpath(opt["path_save"], string(opt["model_choice"]), "model_data", "$(stat_name)_modelobj.jld")
 
@@ -202,4 +195,3 @@ opt = Dict("epot_choice" => :oudin,
 # Run the calibration
 
 calib_all_stations(opt)
-
