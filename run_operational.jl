@@ -1,7 +1,7 @@
 # Load packages
 
 using VannModels
-#using ExcelReaders
+using CSV
 using DataFrames
 using PyPlot
 using JLD
@@ -121,7 +121,7 @@ function run_operational(opt_path, opt_model, forecast_issued; plot_res = true)
 
             # Run model
 
-            init_states!(model)
+            init_states!(model, date[1])   # THIS MIGHT BE WRONG
             
             q_sim = run_model(model, input)
 
@@ -138,7 +138,7 @@ function run_operational(opt_path, opt_model, forecast_issued; plot_res = true)
 
             file_name = joinpath(path_save, "tables_short_forecast", "$(stat_name)_data.txt")
 
-            writetable(file_name, df_res, quotemark = '"', separator = '\t')
+            CSV.write(file_name, df_res, quotechar = '"', delim = '\t', dateformat = "yyyy-mm-ddTHH:MM:SS")
             
             # Plot results for forecast period
 
@@ -167,13 +167,13 @@ function run_operational(opt_path, opt_model, forecast_issued; plot_res = true)
 
             end
 
-            # Run seasonal forecast
+            # # Run seasonal forecast
 
-            df_season = run_season(model, date, tair, prec, epot, opt_model["ndays"])
+            # df_season = run_season(model, date, tair, prec, epot, opt_model["ndays"])
 
-            file_name = joinpath(path_save, "tables_season_forecast", "$(stat_name)_data.txt")
+            # file_name = joinpath(path_save, "tables_season_forecast", "$(stat_name)_data.txt")
             
-            writetable(file_name, df_season, quotemark = '"', separator = '\t')
+            # writetable(file_name, df_season, quotemark = '"', separator = '\t')
 
         catch
 
@@ -215,7 +215,7 @@ opt_model = Dict("epot_choice" => :oudin,
 
 println("Running model $(opt_model["model_choice"])")
 
-@time run_operational(opt_path, opt_model, forecast_issued, plot_res = true)
+@time run_operational(opt_path, opt_model, forecast_issued, plot_res = false)
 
 # Run for hbv_light
 
@@ -225,6 +225,6 @@ opt_model = Dict("epot_choice" => :oudin,
 
 println("Running model $(opt_model["model_choice"])")
 
-@time run_operational(opt_path, opt_model, forecast_issued, plot_res = true)
+@time run_operational(opt_path, opt_model, forecast_issued, plot_res = false)
 
 toc()

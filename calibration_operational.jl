@@ -112,39 +112,48 @@ function calib_all_stations(opt)
 
         writetable(file_save, df_res, quotemark = '"', separator = '\t')
         
-        # Plot results
+        # Compute performance
 
-        ioff()
-
-        file_save = joinpath(opt["path_save"], string(opt["model_choice"]), "figures", "$(stat_name)_runoff.png")
-
-        fig = plt[:figure](figsize = (12,7))
-
-        plt[:style][:use]("ggplot")
-        
         ikeep = opt["warmup"]:length(date)
-
-        plt[:plot](date[ikeep], q_sim[ikeep], linewidth = 1.2, color = "r", label = "Sim")
-        plt[:title]("Station: $(stat_name)")
-        plt[:ylabel]("Runoff (mm/day)")
 
         if ~isempty(q_obs)
             kge_res = kge(q_sim[ikeep], q_obs[ikeep])
             nse_res = nse(q_sim[ikeep], q_obs[ikeep])
             kge_res = round(kge_res, 2)
             nse_res = round(nse_res, 2)
-            plt[:plot](date[ikeep], q_obs[ikeep], linewidth = 1.2, color = "b", label = "Obs")
-            plt[:legend]()
-            plt[:title]("Station: $(stat_name) | KGE = $(kge_res) | NSE = $(nse_res)")
         else
             kge_res = 0.0
             nse_res = 0.0
         end
 
-        savefig(file_save)        
+        # Plot results
+        
+        if opt["plot_res"]
+            
+            ioff()
 
-        close(fig)
+            file_save = joinpath(opt["path_save"], string(opt["model_choice"]), "figures", "$(stat_name)_runoff.png")
 
+            fig = plt[:figure](figsize = (12,7))
+
+            plt[:style][:use]("ggplot")
+            
+            plt[:plot](date[ikeep], q_sim[ikeep], linewidth = 1.2, color = "r", label = "Sim")
+            plt[:title]("Station: $(stat_name)")
+            plt[:ylabel]("Runoff (mm/day)")
+
+            if ~isempty(q_obs)
+                plt[:plot](date[ikeep], q_obs[ikeep], linewidth = 1.2, color = "b", label = "Obs")
+                plt[:legend]()
+                plt[:title]("Station: $(stat_name) | KGE = $(kge_res) | NSE = $(nse_res)")
+            end
+
+            savefig(file_save)        
+
+            close(fig)
+
+        end
+            
         # Add to dataframe
 
         push!(df_calib, [stat_name nse_res kge_res])
@@ -171,16 +180,17 @@ end
 
 # Settings for gr4j
 
-opt = Dict("epot_choice" => :oudin,
-           "model_choice" => :model_gr4j,
-           "tstep" => 24.0,
-           "warmup" => 3*365,
-           "path_save" => "/hdata/fou/jmg/flood_forecasting/model_calib",
-           "path_inputs" => "/hdata/fou/jmg/flood_forecasting/model_input")
+#opt = Dict("epot_choice" => :oudin,
+#           "model_choice" => :model_gr4j,
+#           "tstep" => 24.0,
+#           "warmup" => 3*365,
+#           "path_save" => "/hdata/fou/jmg/flood_forecasting/model_calib",
+#           "path_inputs" => "/hdata/fou/jmg/flood_forecasting/model_input",
+#           "plot_res" => false)
           
 # Run the calibration
 
-calib_all_stations(opt)
+#calib_all_stations(opt)
 
 
 # Settings for hbv_ligt
@@ -190,7 +200,8 @@ opt = Dict("epot_choice" => :oudin,
            "tstep" => 24.0,
            "warmup" => 3*365,
            "path_save" => "/hdata/fou/jmg/flood_forecasting/model_calib",
-           "path_inputs" => "/hdata/fou/jmg/flood_forecasting/model_input")
+           "path_inputs" => "/hdata/fou/jmg/flood_forecasting/model_input",
+           "plot_res" => false)
 
 # Run the calibration
 
